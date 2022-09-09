@@ -103,7 +103,7 @@ func auth() (*AccessToken, error) {
 		}
 	}
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return nil, fmt.Errorf("login failed: %s", resp.Status)
+		return nil, fmt.Errorf("authentication failed: %s", resp.Status)
 	}
 	defer resp.Body.Close()
 	content, err := ioutil.ReadAll(resp.Body)
