@@ -1,0 +1,86 @@
+def artifact_glob="build/*"
+def build_image="quay.io/factory2/spmm-jenkins-agent-go-centos7:latest"
+
+pipeline {
+    agent {
+        kubernetes {
+            cloud params.JENKINS_AGENT_CLOUD_NAME
+            label "jenkins-slave-${UUID.randomUUID().toString()}"
+            serviceAccount "jenkins"
+            defaultContainer 'jnlp'
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            metadata:
+                labels:
+                app: "jenkins-${env.JOB_BASE_NAME}"
+                indy-pipeline-build-number: "${env.BUILD_NUMBER}"
+            spec:
+                containers:
+                - name: jnlp
+                image: ${build_image}
+                imagePullPolicy: Always
+                tty: true
+                env:
+                - name: HOME
+                    value: /home/jenkins
+                - name: GOROOT
+                    value: /usr/lib/golang
+                - name: GOPATH
+                    value: /home/jenkins/gopath
+                - name: GOPROXY
+                    value: https://proxy.golang.org
+                - name: TEST_MOUNT_PATH
+                    value: /opt/it
+                resources:
+                    requests:
+                    memory: 4Gi
+                    cpu: 2000m
+                    limits:
+                    memory: 8Gi
+                    cpu: 4000m
+                workingDir: "/home/jenkins"
+                volumeMounts:
+                - name: vol-indy-integration-test
+                    mountPath: "/opt/it"
+                    readOnly: false
+                volumes:
+                - name: vol-indy-integration-test
+                    persistentVolumeClaim: 
+                    claimName: indy-integration-test
+            """
+        }
+    }
+    
+    parameters {
+        string(name: 'DATASET_REPO_URL', defaultValue: '', description: 'The repo where we store the test dataset.')
+        string(name: 'GCHAT_NOTIFICATION_URL', defaultValue: '', description: 'The notification url of gChat')
+    }
+
+    stages{
+        stage ('Starting Integraton test job') {
+            steps{
+                script{
+                    build job: 'indy-it-group', parameters: [
+                        [$class: 'StringParameterValue', name: 'GROUP_BUILD_ID', value: "12327"],
+                        [$class: 'StringParameterValue', name: 'DATASET_REPO_URL', value: "${params.DATASET_REPO_URL}"]
+                    ]
+                }
+            }
+        }
+    }
+        
+    post {
+        success {
+            googlechatnotification url: "${params.GCHAT_NOTIFICATION_URL}",
+                                    message: 'Build Success in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER, check $BUILD_URL to view the results.' + " Done in ${currentBuild.durationString}",
+                                    notifySuccess: true
+        }
+        
+        failure {
+            googlechatnotification url: "${params.GCHAT_NOTIFICATION_URL}",
+                                    message: 'Build failed in Jenkins: $PROJECT_NAME - #$BUILD_NUMBER, check $BUILD_URL to view the results.' + " Done in ${currentBuild.durationString}",
+                                    notifyFailure: true
+        }
+    }
+}
