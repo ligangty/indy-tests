@@ -10,6 +10,7 @@ import (
 	"github.com/commonjava/indy-tests/cmd/event"
 	"github.com/commonjava/indy-tests/cmd/integrationtest"
 	"github.com/commonjava/indy-tests/cmd/promotetest"
+	"github.com/commonjava/indy-tests/cmd/statictest"
 	"github.com/spf13/cobra"
 )
 
@@ -27,6 +28,7 @@ func main() {
 	rootCmd.AddCommand(dataset.NewDatasetCmd())
 	rootCmd.AddCommand(integrationtest.NewIntegrationTestCmd())
 	rootCmd.AddCommand(event.NewEventTestCmd())
+	rootCmd.AddCommand(statictest.NewStaticTestCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
