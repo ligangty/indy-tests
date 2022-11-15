@@ -73,6 +73,7 @@ func DoRun(originalIndy, staticIndy string, foloTrackContent common.TrackedConte
 				if status == http.StatusNotFound {
 					fmt.Printf("%s is not found in the static proxy server. \n", art)
 				} else {
+					fmt.Printf("%s can not be downloaded with error status: %v. \n", art, status)
 					broken = true
 				}
 			}
