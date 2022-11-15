@@ -2,9 +2,11 @@ package buildtest
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"path"
 	"strings"
+	"sync"
 
 	common "github.com/commonjava/indy-tests/pkg/common"
 )
@@ -34,6 +36,8 @@ func DoRun(originalIndy, staticIndy string, foloTrackContent common.TrackedConte
 	trackingId := foloTrackContent.TrackingKey.Id
 	downloadDir := prepareDownloadDirectories(trackingId)
 	downloads := prepareDownloadEntriesByFolo(staticIndy, foloTrackContent)
+	failedArtifacts := make(map[string]int)
+	var mu sync.Mutex
 
 	downloadFunc := func(md5str, originalArtiURL, targetArtiURL string) bool {
 		fileLoc := path.Join(downloadDir, path.Base(targetArtiURL))
@@ -41,23 +45,35 @@ func DoRun(originalIndy, staticIndy string, foloTrackContent common.TrackedConte
 			fmt.Printf("Dry run download, url: %s\n", targetArtiURL)
 			return true
 		}
-		success, _ := common.DownloadFile(targetArtiURL, fileLoc)
+		success, status := common.DownloadFile(targetArtiURL, fileLoc)
 		if success {
 			common.Md5Check(fileLoc, md5str)
+		} else {
+			mu.Lock()
+			failedArtifacts[targetArtiURL] = status
+			mu.Unlock()
 		}
 		return success
 	}
-	broken := false
+
 	if len(downloads) > 0 {
 		fmt.Println("Start handling downloads artifacts.")
 		fmt.Printf("==========================================\n\n")
 		if processNum > 1 {
-			broken = !common.ConcurrentRun(processNum, downloads, downloadFunc)
+			common.ConcurrentRun(processNum, downloads, downloadFunc)
 		} else {
 			for _, down := range downloads {
-				broken = !downloadFunc(down[0], down[1], down[2])
-				if broken {
-					break
+				downloadFunc(down[0], down[1], down[2])
+			}
+		}
+		fmt.Println("==========================================")
+		broken := false
+		for art, status := range failedArtifacts {
+			if status > 400 {
+				if status == http.StatusNotFound {
+					fmt.Printf("%s is not found in the static proxy server. \n", art)
+				} else {
+					broken = true
 				}
 			}
 		}
