@@ -71,9 +71,9 @@ func DoRun(originalIndy, staticIndy string, foloTrackContent common.TrackedConte
 		for art, status := range failedArtifacts {
 			if status > 400 {
 				if status == http.StatusNotFound {
-					fmt.Printf("%s is not found in the static proxy server. \n", art)
+					fmt.Printf("WARNING: %s is not found in the static proxy server. \n", art)
 				} else {
-					fmt.Printf("%s can not be downloaded with error status: %v. \n", art, status)
+					fmt.Printf("ERROR: %s can not be downloaded with error status: %v. \n", art, status)
 					broken = true
 				}
 			}
