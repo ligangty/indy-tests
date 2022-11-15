@@ -105,7 +105,7 @@ func Run(pncBaseUrl, indyBaseUrl, buildId string, isGroupBuild bool) {
 		dependencyGraphURL := buildURL + "/dependency-graph"
 		dependencyGraphFileLoc := path.Join(dirLoc, "dependency-graph.json")
 		if !common.FileOrDirExists(dependencyGraphFileLoc) {
-			success := common.DownloadFile(dependencyGraphURL, dependencyGraphFileLoc)
+			success, _ := common.DownloadFile(dependencyGraphURL, dependencyGraphFileLoc)
 			if !success {
 				fmt.Println("Download dependency-graph.json failed.")
 				return
@@ -143,7 +143,7 @@ func generateBuildQueueFile(fileLoc string, edges []Edge) {
 
 func downloadFileIfNotExist(url, fileLoc string) bool {
 	if !common.FileOrDirExists(fileLoc) {
-		success := common.DownloadFile(url, fileLoc)
+		success, _ := common.DownloadFile(url, fileLoc)
 		if !success {
 			fmt.Printf("Download file %s failed\n", fileLoc)
 			return false
