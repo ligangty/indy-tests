@@ -41,8 +41,7 @@ func DoRun(originalIndy, staticIndy string, foloTrackContent common.TrackedConte
 			fmt.Printf("Dry run download, url: %s\n", targetArtiURL)
 			return true
 		}
-		success := false
-		success = common.DownloadFile(targetArtiURL, fileLoc)
+		success, _ := common.DownloadFile(targetArtiURL, fileLoc)
 		if success {
 			common.Md5Check(fileLoc, md5str)
 		}

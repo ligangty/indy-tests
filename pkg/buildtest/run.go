@@ -57,7 +57,7 @@ func DoRun(originalIndy, targetIndy, indyProxyUrl, packageType, newBuildName str
 		if strings.HasPrefix(targetArtiURL, PROXY_) {
 			success = common.DownloadFileByProxy(targetArtiURL[len(PROXY_):], fileLoc, indyProxyUrl, newBuildName+common.TRACKING_SUFFIX, "pass")
 		} else {
-			success = common.DownloadFile(targetArtiURL, fileLoc)
+			success, _ = common.DownloadFile(targetArtiURL, fileLoc)
 		}
 		if success {
 			common.Md5Check(fileLoc, md5str)
