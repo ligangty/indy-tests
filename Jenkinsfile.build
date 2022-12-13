@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 def artifact_glob="build/*"
-def build_image="quay.io/factory2/spmm-jenkins-agent-go-centos7:latest"
+def build_image="quay.io/factory2/spmm-jenkins-agent-go:latest"
 
 pipeline {
   agent {
