@@ -16,7 +16,7 @@
 
 // This Jenkinsfile is used as CI script for indy-tests project
 
-def build_image="quay.io/factory2/spmm-jenkins-agent-go-centos7:latest"
+def build_image="quay.io/factory2/spmm-jenkins-agent-go:latest"
 pipeline {
   agent {
     kubernetes {
