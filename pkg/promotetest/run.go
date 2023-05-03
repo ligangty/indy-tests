@@ -44,5 +44,5 @@ func DoRun(indyBaseUrl, foloTrackId, sourceStore, targetStore, newVersionNum str
 		}
 	}
 
-	return promote(indyBaseUrl, sourceStore, targetStore, paths, dryRun)
+	return promote(indyBaseUrl, foloTrackId, sourceStore, targetStore, paths, dryRun)
 }

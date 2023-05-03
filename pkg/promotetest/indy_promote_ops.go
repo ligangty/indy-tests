@@ -12,6 +12,7 @@ import (
 
 // IndyPromoteVars ...
 type IndyPromoteVars struct {
+	TrackingId     string
 	Source         string
 	Target         string
 	Paths          []string
@@ -30,8 +31,8 @@ func (promoteVars *IndyPromoteVars) fillDefaults() {
 	promoteVars.FailWhenExists = true
 }
 
-func createIndyPromoteVars(source, target string, paths []string) IndyPromoteVars {
-	promoteVars := &IndyPromoteVars{Source: source, Target: target, Paths: paths}
+func createIndyPromoteVars(trackingId, source, target string, paths []string) IndyPromoteVars {
+	promoteVars := &IndyPromoteVars{TrackingId: trackingId, Source: source, Target: target, Paths: paths}
 	promoteVars.fillDefaults()
 	return *promoteVars
 }
@@ -39,6 +40,7 @@ func createIndyPromoteVars(source, target string, paths []string) IndyPromoteVar
 // IndyPromoteJSONTemplate ...
 func IndyPromoteJSONTemplate(indyPromoteVars *IndyPromoteVars) string {
 	request := `{
+  "trackingId": {{.TrackingId}},
   "async": {{.Async}},
   "source": "{{.Source}}",
   "target": "{{.Target}}",
@@ -67,8 +69,9 @@ var isNotLast = template.FuncMap{
 	},
 }
 
-func promote(indyURL, source, target string, paths []string, dryRun bool) (string, int, bool) {
+func promote(indyURL, trackingId, source, target string, paths []string, dryRun bool) (string, int, bool) {
 	promoteVars := IndyPromoteVars{
+		TrackingId: trackingId,
 		Source: source,
 		Target: target,
 		Paths:  paths,
