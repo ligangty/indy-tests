@@ -40,7 +40,7 @@ func createIndyPromoteVars(trackingId, source, target string, paths []string) In
 // IndyPromoteJSONTemplate ...
 func IndyPromoteJSONTemplate(indyPromoteVars *IndyPromoteVars) string {
 	request := `{
-  "trackingId": {{.TrackingId}},
+  "trackingId": "{{.TrackingId}}",
   "async": {{.Async}},
   "source": "{{.Source}}",
   "target": "{{.Target}}",
