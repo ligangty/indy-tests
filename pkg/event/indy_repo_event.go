@@ -217,7 +217,7 @@ func delAllowed(buildName string) bool {
 	return false
 }
 
-//Verify cleanup for the hosted repo deleting
+// Verify cleanup for the hosted repo deleting
 func deleteIndyHosted(indyURL, buildType, repoName string, uploads map[string][]string) {
 	fmt.Println("Start hosted repo cleanup.")
 	fmt.Printf("==========================================\n\n")
@@ -313,7 +313,7 @@ func deleteIndyHosted(indyURL, buildType, repoName string, uploads map[string][]
 	fmt.Printf("Finish hosted repo cleanup.\n\n")
 }
 
-//Verify cleanup for the remote repo deleting
+// Verify cleanup for the remote repo deleting
 func deleteIndyRemote(indyURL, buildType, repoName string) {
 	fmt.Println("Start remote repo cleanup.")
 	fmt.Printf("==========================================\n\n")
@@ -365,7 +365,7 @@ func deleteIndyRemote(indyURL, buildType, repoName string) {
 	fmt.Printf("Finish remote repo cleanup.\n\n")
 }
 
-//Verify cleanup for the group repo deleting
+// Verify cleanup for the group repo deleting
 func deleteIndyGroup(indyURL, buildType, repoName string) {
 	URL := fmt.Sprintf("%s/api/admin/stores/%s/group/%s", indyURL, buildType, repoName)
 	fmt.Printf("Start deleting group repo %s\n", repoName)
@@ -512,20 +512,22 @@ func getRequest(url string) (string, int, bool) {
 	return content, code, succeeded
 }
 
+var authenticator = common.DecideAuthenticator()
+
 func postRequest(url string, data io.Reader) (string, bool) {
-	content, _, succeeded := common.HTTPRequest(url, common.MethodPost, common.KeycloakAuthenticator, true, data, nil, "", false)
+	content, _, succeeded := common.HTTPRequest(url, common.MethodPost, authenticator, true, data, nil, "", false)
 	debugFailureRequest(succeeded, content)
 	return content, succeeded
 }
 
 func putRequest(url string, data io.Reader) bool {
-	content, _, succeeded := common.HTTPRequest(url, common.MethodPut, common.KeycloakAuthenticator, false, data, nil, "", false)
+	content, _, succeeded := common.HTTPRequest(url, common.MethodPut, authenticator, false, data, nil, "", false)
 	debugFailureRequest(succeeded, content)
 	return succeeded
 }
 
 func delRequest(url string) bool {
-	content, _, succeeded := common.HTTPRequest(url, common.MethodDelete, common.KeycloakAuthenticator, false, nil, nil, "", false)
+	content, _, succeeded := common.HTTPRequest(url, common.MethodDelete, authenticator, false, nil, nil, "", false)
 	debugFailureRequest(succeeded, content)
 	return succeeded
 }

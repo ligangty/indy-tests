@@ -152,7 +152,7 @@ func downloadFileIfNotExist(url, fileLoc string) bool {
 	return true
 }
 
-//Read a json file, format and override it
+// Read a json file, format and override it
 func formatJsonFile(fileLoc string) {
 	var prettyJSON bytes.Buffer
 	err := json.Indent(&prettyJSON, common.ReadByteFromFile(fileLoc), "", "  ")

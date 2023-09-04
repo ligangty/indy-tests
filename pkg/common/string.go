@@ -20,7 +20,7 @@ import (
 	"strings"
 )
 
-//IsEmptyString Check if string is empty
+// IsEmptyString Check if string is empty
 func IsEmptyString(str string) bool {
 	return len(strings.TrimSpace(str)) == 0
 }

@@ -95,7 +95,21 @@ type errorHandler func()
 
 type Authenticate func(request *http.Request) error
 
-//GetHost gets the hostname from a url string
+func DefaultAuthenticator(request *http.Request) error {
+	fmt.Print("Use default authenticator, which will not do any authentication.\n\n")
+	return nil
+}
+
+func DecideAuthenticator() Authenticate {
+	useKeycloak := os.Getenv("USE_KEYCLOAK")
+	if strings.ToLower(strings.TrimSpace(useKeycloak)) == "true" {
+		return KeycloakAuthenticator
+	}
+	fmt.Print("The keycloak is not enabled through \"USE_KEYCLOAK\" environment variable.\n\n")
+	return DefaultAuthenticator
+}
+
+// GetHost gets the hostname from a url string
 func GetHost(URLString string) string {
 	u, err := url.Parse(URLString)
 	if err != nil {
@@ -105,7 +119,7 @@ func GetHost(URLString string) string {
 	return u.Hostname()
 }
 
-//GetPort gets the port from a url string
+// GetPort gets the port from a url string
 func GetPort(URLString string) string {
 	u, err := url.Parse(URLString)
 	if err != nil {
@@ -232,7 +246,7 @@ func newHTTPError(message string, statusCode int) HTTPError {
 	return HTTPError{message, statusCode}
 }
 
-//HTTPError represents a generic http problem
+// HTTPError represents a generic http problem
 type HTTPError struct {
 	Message    string
 	StatusCode int

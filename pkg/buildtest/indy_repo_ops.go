@@ -100,7 +100,7 @@ func prepareIndyGroup(indyURL, buildName string, buildMeta BuildMetadata, additi
 	return result
 }
 
-//Delete group and hosted repo (with content)
+// Delete group and hosted repo (with content)
 func DeleteIndyTestRepos(indyURL, packageType, buildName string) {
 	if !delAllowed(buildName) {
 		return
@@ -117,7 +117,7 @@ func delAllowed(buildName string) bool {
 	return false
 }
 
-//Delete hosted repo and content
+// Delete hosted repo and content
 func deleteIndyHosted(indyURL, buildType, repoName string) {
 	URL := fmt.Sprintf("%s/api/admin/stores/%s/hosted/%s?deleteContent=true", indyURL, buildType, repoName)
 	fmt.Printf("Start deleting hosted repo %s\n", repoName)
@@ -150,17 +150,19 @@ func getRequest(url string) (string, int, bool) {
 	return content, code, succeeded
 }
 
+var authenticator = common.DecideAuthenticator()
+
 func postRequest(url string, data io.Reader) (string, bool) {
-	content, _, succeeded := common.HTTPRequest(url, common.MethodPost, common.KeycloakAuthenticator, true, data, nil, "", false)
+	content, _, succeeded := common.HTTPRequest(url, common.MethodPost, authenticator, true, data, nil, "", false)
 	return content, succeeded
 }
 
 func putRequest(url string, data io.Reader) bool {
-	_, _, succeeded := common.HTTPRequest(url, common.MethodPut, common.KeycloakAuthenticator, false, data, nil, "", false)
+	_, _, succeeded := common.HTTPRequest(url, common.MethodPut, authenticator, false, data, nil, "", false)
 	return succeeded
 }
 
 func delRequest(url string) bool {
-	_, _, succeeded := common.HTTPRequest(url, common.MethodDelete, common.KeycloakAuthenticator, false, nil, nil, "", false)
+	_, _, succeeded := common.HTTPRequest(url, common.MethodDelete, authenticator, false, nil, nil, "", false)
 	return succeeded
 }

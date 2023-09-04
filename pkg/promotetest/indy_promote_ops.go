@@ -72,9 +72,9 @@ var isNotLast = template.FuncMap{
 func promote(indyURL, trackingId, source, target string, paths []string, dryRun bool) (string, int, bool) {
 	promoteVars := IndyPromoteVars{
 		TrackingId: trackingId,
-		Source: source,
-		Target: target,
-		Paths:  paths,
+		Source:     source,
+		Target:     target,
+		Paths:      paths,
 	}
 	promote := IndyPromoteJSONTemplate(&promoteVars)
 
